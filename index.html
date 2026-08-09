@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" class=""><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>本科生国家奖学金申请系统</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&amp;family=Noto+Sans+SC:wght@300;400;500;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#15233b;--primary-light:#2a4a7f;--primary-soft:#eef2f8;
+  --gold:#b8860b;--gold-soft:#fbf3e0;
+  --crimson:#c0392b;--crimson-soft:#fdf0ee;
+  --emerald:#10b75e;--emerald-soft:#e8f8f0;
+  --amber:#d68910;--amber-soft:#fef5e7;
+  --bg:#f7f6f3;--card:#ffffff;
+  --text:#1a202c;--text-mid:#4a5568;--text-light:#8b95a7;
+  --border:#e3e6ec;--border-strong:#cdd3de;
+  --radius:10px;
+  --shadow-sm:0 1px 2px rgba(21,35,59,.06);
+  --shadow:0 2px 8px rgba(21,35,59,.07),0 1px 3px rgba(21,35,59,.04);
+  --shadow-lg:0 12px 40px rgba(21,35,59,.10),0 4px 12px rgba(21,35,59,.06);
+  --serif:'Noto Serif SC',serif;--sans:'Noto Sans SC',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;font-size:15px;
+  background-image:radial-gradient(circle at 20% 0%,rgba(21,35,59,.025) 0,transparent 50%),radial-gradient(circle at 80% 100%,rgba(184,134,11,.02) 0,transparent 50%);min-height:100vh;}
+
+.topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);}
+.topbar-inner{max-width:1320px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--serif);font-weight:900;font-size:20px;box-shadow:0 4px 12px rgba(21,35,59,.25);}
+.brand-text{display:flex;flex-direction:column;line-height:1.25}
+.brand-text .uni{font-family:var(--serif);font-weight:700;font-size:16px;color:var(--primary)}
+.brand-text .sub{font-size:12px;color:var(--text-light);letter-spacing:.5px}
+.topbar-actions{display:flex;align-items:center;gap:12px}
+.status-pill{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:var(--amber-soft);color:var(--amber);font-size:12px;font-weight:500;}
+.status-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.btn-submit{padding:9px 22px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-family:var(--sans);font-weight:500;font-size:14px;box-shadow:0 4px 14px rgba(21,35,59,.3);transition:transform .2s,box-shadow .2s;}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(21,35,59,.4)}
+.btn-submit:active{transform:translateY(0)}
+
+.layout{max-width:1320px;margin:0 auto;padding:28px 32px 80px;display:grid;grid-template-columns:248px 1fr;gap:32px;align-items:start;}
+.sidebar{position:sticky;top:88px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);}
+.sidebar-title{font-family:var(--serif);font-weight:600;font-size:13px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.nav-list{list-style:none;display:flex;flex-direction:column;gap:4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--text-mid);font-weight:400;transition:all .2s;border:1px solid transparent;}
+.nav-item:hover{background:var(--primary-soft);color:var(--primary)}
+.nav-item.active{background:var(--primary);color:#fff;font-weight:500}
+.nav-item.done{color:var(--emerald)}
+.nav-item.done .nav-num{background:var(--emerald);color:#fff;border-color:var(--emerald)}
+.nav-num{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:600;background:var(--bg);color:var(--text-light);border:1px solid var(--border-strong);flex-shrink:0;transition:all .2s;}
+.nav-item.active .nav-num{background:rgba(255,255,255,.2);color:#fff;border-color:transparent}
+.nav-item.done .nav-num::after{content:'✓';font-size:13px}
+.nav-item.done .nav-num-text{display:none}
+.sidebar-progress{margin-top:18px;padding-top:16px;border-top:1px solid var(--border);}
+.progress-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;border:1px solid var(--border);}
+.progress-fill{height:100%;width:0%;border-radius:3px;background:linear-gradient(90deg,var(--primary),var(--gold));transition:width .5s ease;}
+.progress-text{display:flex;justify-content:space-between;font-size:12px;color:var(--text-light);margin-top:8px;font-family:var(--mono);}
+
+.main{display:flex;flex-direction:column;gap:24px}
+.section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:88px;}
+.section-header{padding:22px 28px 18px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--primary-soft) 0%,transparent 100%);}
+.section-header h2{font-family:var(--serif);font-weight:700;font-size:20px;color:var(--primary);display:flex;align-items:center;gap:10px;}
+.section-num{width:30px;height:30px;border-radius:8px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;font-weight:700;flex-shrink:0;}
+.section-desc{font-size:13px;color:var(--text-light);margin-top:6px;margin-left:40px;}
+.section-body{padding:24px 28px}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px}
+.form-grid.cols-1{grid-template-columns:1fr}
+.form-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.field-label{font-size:13px;font-weight:500;color:var(--text-mid);display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.field-label .req{color:var(--crimson);font-size:14px}
+.field-label .hint{color:var(--text-light);font-size:12px;font-weight:400}
+.input,.select,textarea{padding:10px 14px;border:1.5px solid var(--border-strong);border-radius:8px;font-family:var(--sans);font-size:14px;color:var(--text);background:var(--card);transition:border-color .2s,box-shadow .2s;width:100%;}
+.input:focus,.select:focus,textarea:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 3px rgba(42,74,127,.12);}
+.input::placeholder,textarea::placeholder{color:var(--text-light);opacity:.7}
+.select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%238b95a7' stroke-width='2'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+textarea{resize:vertical;min-height:100px;line-height:1.7}
+.input.readonly{background:var(--bg);color:var(--text-mid);cursor:not-allowed}
+
+.radio-group{display:flex;gap:12px;align-items:center;padding:8px 0;flex-wrap:wrap;}
+.radio-item{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;color:var(--text);padding:6px 14px;border:1.5px solid var(--border-strong);border-radius:8px;transition:all .2s;}
+.radio-item:hover{border-color:var(--primary-light)}
+.radio-item input{display:none}
+.radio-item .radio-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border-strong);display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.radio-item input:checked ~ .radio-dot{border-color:var(--primary)}
+.radio-item input:checked ~ .radio-dot::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--primary);}
+.radio-item:has(input:checked){border-color:var(--primary);background:var(--primary-soft);color:var(--primary);font-weight:500;}
+
+.rank-group{display:flex;align-items:center;gap:10px;padding:12px 16px;border:1.5px solid var(--border-strong);border-radius:8px;background:var(--bg);transition:border-color .2s;}
+.rank-group:focus-within{border-color:var(--primary-light);box-shadow:0 0 0 3px rgba(42,74,127,.12)}
+.rank-input{width:70px;padding:8px 10px;border:1.5px solid var(--border-strong);border-radius:6px;font-family:var(--mono);font-size:15px;font-weight:600;text-align:center;color:var(--primary);background:var(--card);}
+.rank-input:focus{outline:none;border-color:var(--primary-light)}
+.rank-sep{color:var(--text-light);font-size:16px}
+.rank-label{font-size:13px;color:var(--text-mid);min-width:50px}
+.ratio-display{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;font-family:var(--mono);font-size:15px;font-weight:600;margin-top:8px;transition:all .3s;}
+.ratio-display.neutral{background:var(--primary-soft);color:var(--primary)}
+.ratio-display.success{background:var(--emerald-soft);color:var(--emerald)}
+.ratio-display.warning{background:var(--amber-soft);color:var(--amber)}
+.ratio-display.danger{background:var(--crimson-soft);color:var(--crimson)}
+.ratio-display .ratio-icon{font-size:16px}
+
+.alert{display:flex;gap:12px;padding:14px 18px;border-radius:10px;font-size:13.5px;line-height:1.6;margin-top:14px;border:1px solid;animation:slideIn .3s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.alert-warning{background:var(--amber-soft);border-color:#f0d68a;color:#7a5c10}
+.alert-danger{background:var(--crimson-soft);border-color:#f0b8b0;color:#8b2a20}
+.alert-info{background:var(--primary-soft);border-color:#b8c5da;color:var(--primary)}
+.alert-success{background:var(--emerald-soft);border-color:#a0e0c0;color:#0a6b38}
+.alert-icon{flex-shrink:0;font-size:18px;line-height:1.5}
+.alert strong{font-weight:700}
+
+.breakthrough-box{margin-top:14px;padding:18px;border-radius:10px;background:linear-gradient(135deg,var(--gold-soft),#fef9ef);border:1.5px solid #e8d09a;animation:slideIn .3s ease;}
+.breakthrough-box h4{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.breakthrough-box .alert{margin-top:10px;background:rgba(255,255,255,.6);border-color:#e8d09a}
+
+.divider{height:1px;background:var(--border);margin:24px 0}
+.subsection-title{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--primary);margin:8px 0 14px;padding-left:10px;border-left:3px solid var(--primary-light);}
+
+.awards-table{width:100%;border-collapse:separate;border-spacing:0}
+.awards-table th{background:var(--primary);color:#fff;padding:10px 14px;font-size:13px;font-weight:500;text-align:left;}
+.awards-table th:first-child{border-radius:8px 0 0 0}
+.awards-table th:last-child{border-radius:0 8px 0 0}
+.awards-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
+.awards-table .aw-input{width:100%;padding:8px 10px;border:1.5px solid var(--border-strong);border-radius:6px;font-size:13px;font-family:var(--sans);}
+.awards-table .aw-input:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 2px rgba(42,74,127,.1)}
+.awards-table .row-num{text-align:center;font-family:var(--mono);font-weight:600;color:var(--text-light);width:40px;}
+.awards-note{margin-top:12px;padding:10px 14px;border-radius:8px;background:var(--primary-soft);font-size:12.5px;color:var(--primary);display:flex;gap:8px;align-items:flex-start;}
+
+.char-counter{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:12px;color:var(--text-light);}
+.char-counter .count{font-family:var(--mono);font-weight:600}
+.char-counter .count.over{color:var(--crimson)}
+
+.upload-zone{border:2px dashed var(--border-strong);border-radius:12px;padding:36px 24px;text-align:center;cursor:pointer;transition:all .25s;background:var(--bg);}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--primary-light);background:var(--primary-soft);}
+.upload-icon{width:52px;height:52px;margin:0 auto 14px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--primary);}
+.upload-zone h4{font-size:15px;font-weight:500;color:var(--text);margin-bottom:4px}
+.upload-zone p{font-size:13px;color:var(--text-light)}
+.upload-formats{font-size:12px;color:var(--text-light);margin-top:8px;font-family:var(--mono)}
+.upload-reminder{margin-bottom:16px;padding:16px 20px;border-radius:10px;background:var(--gold-soft);border:1px solid #e8d09a;font-size:13.5px;color:#7a5c10;line-height:1.8;}
+.upload-reminder strong{color:var(--gold);font-weight:600}
+.upload-reminder ol{margin:8px 0 0 18px;display:flex;flex-direction:column;gap:3px}
+.upload-reminder li{padding-left:2px}
+
+.file-list{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.file-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow-sm);animation:slideIn .2s ease;}
+.file-icon{width:36px;height:36px;border-radius:8px;background:var(--primary-soft);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.file-info{flex:1;min-width:0}
+.file-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.file-size{font-size:12px;color:var(--text-light);font-family:var(--mono)}
+.file-remove{width:28px;height:28px;border-radius:6px;border:none;cursor:pointer;background:var(--crimson-soft);color:var(--crimson);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;}
+.file-remove:hover{background:var(--crimson);color:#fff}
+
+.remarks-auto{padding:14px 18px;border-radius:10px;background:var(--primary-soft);border:1px solid #b8c5da;margin-bottom:14px;}
+.remarks-auto-title{font-size:13px;font-weight:600;color:var(--primary);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.remarks-auto-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.remarks-auto-list li{font-size:13.5px;color:var(--text-mid);padding:6px 10px;background:var(--card);border-radius:6px;border-left:3px solid var(--amber);display:flex;align-items:flex-start;gap:6px;}
+.remarks-auto-empty{font-size:13px;color:var(--text-light);font-style:italic;padding:6px 0;}
+
+.btn-add{padding:8px 16px;border-radius:8px;border:1.5px dashed var(--primary-light);background:var(--primary-soft);color:var(--primary);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.btn-add:hover{background:var(--primary);color:#fff;border-style:solid;}
+.btn-add:disabled{opacity:.5;cursor:not-allowed;}
+
+.reason-guide{margin-bottom:16px;padding:16px 20px;border-radius:10px;background:var(--gold-soft);border:1px solid #e8d09a;font-size:13.5px;color:#7a5c10;line-height:1.8;}
+.reason-guide strong{color:var(--gold);font-weight:600}
+.reason-guide ul{margin:8px 0 0 18px;display:flex;flex-direction:column;gap:3px}
+.reason-toolbar{display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+.btn-generate{padding:9px 20px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-family:var(--sans);font-weight:500;font-size:13.5px;box-shadow:0 3px 12px rgba(21,35,59,.2);transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.btn-generate:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(21,35,59,.3)}
+.btn-copy{padding:9px 18px;border-radius:8px;border:1.5px solid var(--border-strong);cursor:pointer;background:var(--card);color:var(--text-mid);font-family:var(--sans);font-weight:500;font-size:13.5px;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.btn-copy:hover{border-color:var(--primary-light);color:var(--primary);background:var(--primary-soft)}
+.reason-textarea{min-height:220px !important;font-size:14.5px !important;line-height:1.9 !important;}
+
+.research-item{border:1.5px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px;background:var(--bg);animation:slideIn .2s ease;}
+.research-item-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.research-item-head .ri-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:6px;background:var(--primary);color:#fff;font-size:13px;font-weight:600;font-family:var(--mono);}
+.research-item-head .ri-remove{width:28px;height:28px;border-radius:6px;border:none;cursor:pointer;background:var(--crimson-soft);color:var(--crimson);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.research-item-head .ri-remove:hover{background:var(--crimson);color:#fff}
+
+.toast-container{position:fixed;top:80px;right:24px;z-index:1000;display:flex;flex-direction:column;gap:10px;}
+.toast{padding:14px 20px;border-radius:10px;background:var(--card);box-shadow:var(--shadow-lg);border-left:4px solid var(--primary);font-size:14px;color:var(--text);display:flex;align-items:center;gap:10px;animation:toastIn .3s ease;max-width:380px;}
+.toast.success{border-left-color:var(--emerald)}
+.toast.warning{border-left-color:var(--amber)}
+.toast.danger{border-left-color:var(--crimson)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+
+@media(max-width:960px){
+  .layout{grid-template-columns:1fr;padding:16px}
+  .sidebar{position:static;display:none}
+  .topbar-inner{padding:12px 16px}
+  .form-grid,.form-grid.cols-3{grid-template-columns:1fr}
+  .section-body{padding:18px 16px}
+  .section-header{padding:16px 18px 14px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">奖</div>
+      <div class="brand-text">
+        <span class="uni">国家奖学金</span>
+        <span class="sub">本科生国家奖学金申请系统</span>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <div class="status-pill"><span class="dot"></span>草稿中</div>
+      <button class="btn-submit" onclick="submitForm()">提交申请</button>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">申请进度</div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-item" data-target="sec-p1"><span class="nav-num"><span class="nav-num-text">1</span></span><span>个人信息</span></li>
+      <li class="nav-item" data-target="sec-p2"><span class="nav-num"><span class="nav-num-text">2</span></span><span>申请条件</span></li>
+      <li class="nav-item" data-target="sec-p3"><span class="nav-num"><span class="nav-num-text">3</span></span><span>竞赛和荣誉</span></li>
+      <li class="nav-item" data-target="sec-p4"><span class="nav-num"><span class="nav-num-text">4</span></span><span>科研与实践</span></li>
+      <li class="nav-item active" data-target="sec-reason"><span class="nav-num"><span class="nav-num-text">5</span></span><span>申请理由</span></li>
+      <li class="nav-item" data-target="sec-p5"><span class="nav-num"><span class="nav-num-text">6</span></span><span>文件上传</span></li>
+      <li class="nav-item" data-target="sec-remarks"><span class="nav-num"><span class="nav-num-text">7</span></span><span>备注栏</span></li>
+    </ul>
+    <div class="sidebar-progress">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%;"></div></div>
+      <div class="progress-text"><span>完成度</span><span id="progressText">0%</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ===== Part 1: 个人信息 ===== -->
+    <section class="section" id="sec-p1">
+      <div class="section-header">
+        <h2><span class="section-num">1</span>个人信息</h2>
+        <p class="section-desc">由学生本人填写，请确保信息正确</p>
+      </div>
+      <div class="section-body">
+        <div class="form-grid">
+          <div class="field"><label class="field-label">姓名 <span class="req">*</span></label><input class="input" id="f-name" placeholder="如：王某某"></div>
+          <div class="field"><label class="field-label">公民身份号码 <span class="req">*</span> <span class="hint">有字母请大写</span></label><input class="input" id="f-idcard" placeholder="如：3503XXXXXXXXXXXXXX" maxlength="18"></div>
+          <div class="field"><label class="field-label">学院 <span class="req">*</span> <span class="hint">写全称</span></label><input class="input" id="f-college" placeholder="如：电气工程与自动化学院"></div>
+          <div class="field"><label class="field-label">专业 <span class="req">*</span> <span class="hint">写全称</span></label><input class="input" id="f-major" placeholder="如：自动化"></div>
+          <div class="field"><label class="field-label">学号 <span class="req">*</span></label><input class="input" id="f-studentid" placeholder="如：0120021xx"></div>
+          <div class="field">
+            <label class="field-label">性别 <span class="req">*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="gender" value="男"><span class="radio-dot"></span>男</label>
+              <label class="radio-item"><input type="radio" name="gender" value="女"><span class="radio-dot"></span>女</label>
+            </div>
+          </div>
+          <div class="field"><label class="field-label">民族 <span class="req">*</span> <span class="hint">需加"族"字</span></label><input class="input" id="f-nation" placeholder="如：汉族"></div>
+          <div class="field">
+            <label class="field-label">学制 <span class="req">*</span></label>
+            <select class="select" id="f-xuezhi">
+              <option value="">请选择</option>
+              <option value="3">三年</option>
+              <option value="4">四年</option>
+              <option value="5">五年</option>
+            </select>
+          </div>
+          <div class="field"><label class="field-label">入学年月 <span class="req">*</span> <span class="hint">××××年××月</span></label><input class="input" id="f-enroll" type="month"></div>
+        </div>
+        <div id="p1-alerts"></div>
+      </div>
+    </section>
+
+    <!-- ===== Part 2: 申请条件 ===== -->
+    <section class="section" id="sec-p2">
+      <div class="section-header">
+        <h2><span class="section-num">2</span>申请条件</h2>
+        <p class="section-desc">参评学年为2024-2025学年，必修课以教务处系统查的为准，成绩不得有修改痕迹</p>
+      </div>
+      <div class="section-body">
+
+        <div class="subsection-title">基本资格</div>
+        <div class="form-grid">
+          <div class="field full">
+            <label class="field-label">是否受处分 <span class="req">*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="punish" value="否" checked=""><span class="radio-dot"></span>否</label>
+              <label class="radio-item"><input type="radio" name="punish" value="是"><span class="radio-dot"></span>是</label>
+            </div>
+            <div class="alert alert-danger" id="punishAlert" style="display:none"><span class="alert-icon">✕</span><span>受处分期间<strong>不符合国家奖学金参评资格</strong>。</span></div>
+          </div>
+          <div class="field full">
+            <label class="field-label">参评学年是否有不及格科目 <span class="req">*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="failFlag" value="否" checked=""><span class="radio-dot"></span>否</label>
+              <label class="radio-item"><input type="radio" name="failFlag" value="是"><span class="radio-dot"></span>是</label>
+            </div>
+            <div class="alert alert-danger" id="failAlert" style="display:none"><span class="alert-icon">⚠</span><span>参评学年存在不及格科目，<strong>不符合参评基本条件</strong>（要求参评学年无不及格科目）。</span></div>
+          </div>
+        </div>
+
+        <div class="form-grid cols-3" style="margin-top:8px">
+          <div class="field"><label class="field-label">必修课门数 <span class="req">*</span></label><input class="input" id="requiredCourses" type="number" min="0" placeholder="如：9"></div>
+          <div class="field"><label class="field-label">及格以上门数 <span class="req">*</span></label><input class="input" id="passedCourses" type="number" min="0" placeholder="如：9"></div>
+          <div class="field">
+            <label class="field-label">及格科目 / 考试科目</label>
+            <div class="rank-group" style="padding:10px 14px">
+              <input class="rank-input" id="examPassed" type="number" min="0" placeholder="及格" style="width:60px">
+              <span class="rank-sep">/</span>
+              <input class="rank-input" id="examTotal" type="number" min="0" placeholder="考试" style="width:60px">
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="subsection-title">成绩与综测排名</div>
+
+        <div class="field full" style="margin-bottom:6px"><label class="field-label">参评学年成绩排名 <span class="req">*</span> <span class="hint">名次 / 总人数</span></label></div>
+        <div class="rank-group" style="margin-bottom:4px">
+          <span class="rank-label">第</span><input class="rank-input" id="gradeRank" type="number" min="1" placeholder="名次">
+          <span class="rank-sep">/</span><input class="rank-input" id="gradeTotal" type="number" min="1" placeholder="总人数"><span class="rank-label">名</span>
+        </div>
+        <div class="ratio-display neutral" id="gradeRatioDisplay" style="display:none">
+          <span class="ratio-icon">📊</span><span>参评学年成绩排名比例：</span><span id="gradeRatioValue">—</span>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="field full" style="margin-bottom:6px">
+          <label class="field-label">实行综合考评排名 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="hasZongce" value="是" checked="" onchange="toggleZongce()"><span class="radio-dot"></span>是</label>
+            <label class="radio-item"><input type="radio" name="hasZongce" value="否" onchange="toggleZongce()"><span class="radio-dot"></span>否</label>
+          </div>
+        </div>
+        <div id="zongceBlock">
+          <div class="field full" style="margin-bottom:6px"><label class="field-label">参评学年综测排名 <span class="req">*</span> <span class="hint">名次 / 总人数</span></label></div>
+          <div class="rank-group" style="margin-bottom:4px">
+            <span class="rank-label">第</span><input class="rank-input" id="zongceRank" type="number" min="1" placeholder="名次">
+            <span class="rank-sep">/</span><input class="rank-input" id="zongceTotal" type="number" min="1" placeholder="总人数"><span class="rank-label">名</span>
+          </div>
+          <div class="ratio-display neutral" id="zongceRatioDisplay" style="display:none">
+            <span class="ratio-icon">📊</span><span>参评学年综测排名比例：</span><span id="zongceRatioValue">—</span>
+          </div>
+        </div>
+
+        <div id="p2-logicAlerts"></div>
+        <div id="breakthroughSection"></div>
+
+        <div class="divider"></div>
+        <div class="subsection-title">奖学金与荣誉</div>
+
+        <div class="field full" style="margin-bottom:18px">
+          <label class="field-label">参评学年是否获得过一等奖学金 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="firstScholar" value="是" onchange="toggleFirstScholar()"><span class="radio-dot"></span>是</label>
+            <label class="radio-item"><input type="radio" name="firstScholar" value="否" onchange="toggleFirstScholar()"><span class="radio-dot"></span>否</label>
+          </div>
+          <div id="firstScholarBox" style="display:none;margin-top:8px">
+            <input class="input" id="firstScholarName" placeholder="请填写奖学金名称（按照奖状名称填写，如：2024-2025学年第一学期一等奖学金）">
+          </div>
+          <div class="alert alert-danger" id="firstScholarAlert" style="display:none"><span class="alert-icon">✕</span><span>未获得一等奖学金，<strong>不符合申请标准</strong>（至少一学期获一等奖学金）。</span></div>
+        </div>
+
+        <div class="field full">
+          <label class="field-label">参评学年是否获得校级及以上综合类荣誉 <span class="req">*</span> <span class="hint">如三好学生、优秀学生干部、优秀共青团员等</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="comprehensiveHonor" value="是"><span class="radio-dot"></span>是</label>
+            <label class="radio-item"><input type="radio" name="comprehensiveHonor" value="否"><span class="radio-dot"></span>否</label>
+          </div>
+          <div class="alert alert-danger" id="honorAlert" style="display:none"><span class="alert-icon">✕</span><span>未获得校级及以上综合类荣誉，<strong>不符合申请标准</strong>。</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== Part 3: 竞赛和荣誉获得情况 ===== -->
+    <section class="section" id="sec-p3">
+      <div class="section-header">
+        <h2><span class="section-num">3</span>参评学年竞赛和荣誉获得情况</h2>
+        <p class="section-desc">填写参评学年（2025-2026学年）的竞赛和荣誉获奖情况，填写须与申请表保持一致</p>
+      </div>
+      <div class="section-body">
+        <div class="field full" style="margin-bottom:14px">
+          <label class="field-label">获奖情况 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="hasAwards" value="有" onchange="toggleAwards()"><span class="radio-dot"></span>有</label>
+            <label class="radio-item"><input type="radio" name="hasAwards" value="无" onchange="toggleAwards()"><span class="radio-dot"></span>无</label>
+          </div>
+        </div>
+        <div id="awardsBox" style="display:none">
+          <div class="awards-note" style="margin-bottom:14px">
+            <span>📌</span>
+            <span>最少填写三项、最多填写四项参评学年校级及以上的获奖。请按照等级由高到低（国家级—省级—校级）、时间递减的顺序填写。日期、奖项名称、颁奖单位须与获奖证书保持一致，不可简写、缩写。</span>
+          </div>
+          <table class="awards-table">
+            <thead><tr><th style="width:40px">#</th><th style="width:150px">获奖日期</th><th>奖项名称</th><th style="width:200px">颁奖单位</th><th style="width:50px"></th></tr></thead>
+            <tbody id="awardsBody"></tbody>
+          </table>
+          <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+            <button class="btn-add" id="addAwardBtn" onclick="addAwardRow()">+ 添加获奖项</button>
+            <span style="font-size:12px;color:var(--text-light)" id="awardCount">已填写 0 / 4 项</span>
+          </div>
+        </div>
+        <div class="alert alert-warning" id="noAwardsAlert" style="display:none"><span class="alert-icon">⚠</span><span>如无获奖情况，请确认是否符合"其他方面表现非常突出"的破格参评条件。</span></div>
+      </div>
+    </section>
+
+    <!-- ===== Part 4: 科研成果及参与实践活动情况 ===== -->
+    <section class="section" id="sec-p4">
+      <div class="section-header">
+        <h2><span class="section-num">4</span>科研成果及参与实践活动情况</h2>
+        <p class="section-desc">填写参评学年（2025-2026学年）的科研成果及实践情况</p>
+      </div>
+      <div class="section-body">
+
+        <div class="subsection-title">科研成果</div>
+        <div class="field full" style="margin-bottom:14px">
+          <label class="field-label">科研成果 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="hasResearch" value="有" onchange="toggleResearch()"><span class="radio-dot"></span>有</label>
+            <label class="radio-item"><input type="radio" name="hasResearch" value="无" onchange="toggleResearch()"><span class="radio-dot"></span>无</label>
+          </div>
+        </div>
+        <div id="researchBox" style="display:none">
+          <div id="researchList"></div>
+          <button class="btn-add" onclick="addResearchItem()">+ 添加科研成果</button>
+        </div>
+
+        <div class="divider"></div>
+        <div class="subsection-title">实践活动情况</div>
+        <div class="form-grid">
+          <div class="field"><label class="field-label">参评学年志愿汇时长 <span class="req">*</span> <span class="hint">单位：小时</span></label><input class="input" id="volunteerHours" type="number" min="0" placeholder="如：101"></div>
+          <div class="field full">
+            <label class="field-label">是否参与实践活动情况 <span class="req">*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="hasPractice" value="是" onchange="togglePractice()"><span class="radio-dot"></span>是</label>
+              <label class="radio-item"><input type="radio" name="hasPractice" value="否" onchange="togglePractice()"><span class="radio-dot"></span>否</label>
+            </div>
+          </div>
+          <div class="field full" id="practiceBox" style="display:none">
+            <label class="field-label">简要描述 <span class="hint">30字以内</span></label>
+            <textarea id="practiceDesc" maxlength="30" placeholder="请简要描述参与的实践活动" style="min-height:60px"></textarea>
+            <div class="char-counter"><span></span><span class="count" id="practiceCount">0 / 30</span></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== Part 5: 申请理由 ===== -->
+    <section class="section" id="sec-reason">
+      <div class="section-header">
+        <h2><span class="section-num">5</span>申请理由</h2>
+        <p class="section-desc">请结合本人情况如实填写申请理由，字数控制在500字以内</p>
+      </div>
+      <div class="section-body">
+        <div class="reason-guide">
+          <strong>📝 撰写要点提示</strong>
+          <ul>
+            <li>简要介绍个人基本情况、政治思想表现</li>
+            <li>阐述学习成绩、排名情况及综合测评表现</li>
+            <li>列举参评学年在竞赛荣誉、科研成果、实践公益等方面的突出表现</li>
+            <li>说明申请国家奖学金的理由及未来努力方向</li>
+          </ul>
+        </div>
+        <div class="reason-toolbar">
+          <button class="btn-generate" onclick="generateReason()">✨ 一键生成草稿</button>
+          <button class="btn-copy" onclick="copyReason()">📋 复制内容</button>
+          <span style="font-size:12px;color:var(--text-light)">基于已填信息自动生成初稿，可自行修改完善</span>
+        </div>
+        <div class="field full">
+          <label class="field-label">申请理由 <span class="req">*</span> <span class="hint">500字以内</span></label>
+          <textarea id="reasonText" class="reason-textarea" maxlength="500" placeholder="请填写申请理由……"></textarea>
+          <div class="char-counter"><span></span><span class="count" id="reasonCount">0 / 500</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Part 6: 文件上传 ===== -->
+    <section class="section" id="sec-p5">
+      <div class="section-header">
+        <h2><span class="section-num">6</span>文件上传</h2>
+        <p class="section-desc">请按要求上传相关证明材料，支持 PDF / JPG / PNG 格式</p>
+      </div>
+      <div class="section-body">
+        <div class="upload-reminder">
+          <strong>请按照以下顺序上传材料：</strong>
+          <ol>
+            <li>学生签字版的本专科国家奖学金申请表（日期可先不填写）</li>
+            <li>参评学年学生成绩及绩点证明</li>
+            <li>奖学金证书</li>
+            <li>竞赛和荣誉证书</li>
+            <li>科研成果等其他相关证明材料</li>
+          </ol>
+        </div>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">📎</div>
+          <h4>点击或拖拽文件到此处上传</h4>
+          <p>可上传多个文件，单个文件不超过 20MB</p>
+          <div class="upload-formats">支持格式：PDF / JPG / JPEG / PNG</div>
+        </div>
+        <input type="file" id="fileInput" multiple="" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="handleFiles(this.files)">
+        <div class="file-list" id="fileList"></div>
+      </div>
+    </section>
+
+    <!-- ===== 备注栏 ===== -->
+    <section class="section" id="sec-remarks">
+      <div class="section-header">
+        <h2><span class="section-num">7</span>备注栏</h2>
+        <p class="section-desc">系统自动生成备注不可修改，学生可自行添加补充说明</p>
+      </div>
+      <div class="section-body">
+        <div class="remarks-auto">
+          <div class="remarks-auto-title">🔒 系统自动生成备注（不可修改）</div>
+          <ul class="remarks-auto-list" id="autoRemarksList"><li class="remarks-auto-empty">暂无自动备注</li></ul>
+        </div>
+        <div class="field full">
+          <label class="field-label">学生补充备注 <span class="hint">可自行添加其他需要说明的情况</span></label>
+          <textarea id="studentRemarks" placeholder="如有其他需要说明的情况，请在此填写……" style="min-height:80px"></textarea>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ===== State ===== */
+let uploadedFiles = [];
+let researchItems = [];
+let awardRows = [];
+
+/* ===== Navigation ===== */
+const navItems = document.querySelectorAll('.nav-item');
+const sections = document.querySelectorAll('.section');
+navItems.forEach(item => { item.addEventListener('click', () => { const t = document.getElementById(item.dataset.target); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); }); });
+const observer = new IntersectionObserver(entries => { entries.forEach(entry => { if(entry.isIntersecting){ const id = entry.target.id; navItems.forEach(n => n.classList.toggle('active', n.dataset.target === id)); } }); }, {rootMargin:'-88px 0px -60% 0px', threshold:0});
+sections.forEach(s => observer.observe(s));
+
+/* ===== Ratio Calculation ===== */
+function calcRatio(rank, total){ if(!rank||!total||total==0) return null; rank=parseFloat(rank); total=parseFloat(total); if(rank>total) return null; return (rank/total)*100; }
+function formatRatio(r){ return r.toFixed(2)+'%'; }
+function getRatioStatus(r){ if(r===null) return 'neutral'; if(r<=10) return 'success'; if(r<=30) return 'warning'; return 'danger'; }
+
+function updateGradeRatio(){ const rk=document.getElementById('gradeRank').value, tl=document.getElementById('gradeTotal').value, d=document.getElementById('gradeRatioDisplay'), v=document.getElementById('gradeRatioValue'); const r=calcRatio(rk,tl); if(r!==null){ d.style.display='flex'; d.className='ratio-display '+getRatioStatus(r); v.textContent=formatRatio(r); } else d.style.display='none'; checkAllLogic(); }
+function updateZongceRatio(){ const rk=document.getElementById('zongceRank').value, tl=document.getElementById('zongceTotal').value, d=document.getElementById('zongceRatioDisplay'), v=document.getElementById('zongceRatioValue'); const r=calcRatio(rk,tl); if(r!==null){ d.style.display='flex'; d.className='ratio-display '+getRatioStatus(r); v.textContent=formatRatio(r); } else d.style.display='none'; checkAllLogic(); }
+
+/* ===== 超学制检查 ===== */
+function checkOverStudy(){
+  const enroll=document.getElementById('f-enroll').value;
+  const xz=document.getElementById('f-xuezhi').value;
+  const alerts=document.getElementById('p1-alerts');
+  let over=false;
+  if(enroll && xz){
+    const enrollYear=parseInt(enroll.split('-')[0]);
+    const studyYears=parseInt(xz);
+    // 参评学年 2024-2025，以2025年为参照
+    const refYear=2025;
+    const elapsed=refYear-enrollYear;
+    if(elapsed>studyYears) over=true;
+  }
+  if(over){
+    alerts.innerHTML='<div class="alert alert-warning"><span class="alert-icon">⚠</span><span><strong>检测到超出学制年限。</strong>按照入学时间和学制年限计算，该生逾期参评，需补充提交学院盖章的《情况说明》，描述超过修业年限仍在校且符合参评资格的具体原因（如休学、参军等）。</span></div>';
+  } else {
+    alerts.innerHTML='';
+  }
+  return over;
+}
+
+/* ===== Logic Checks (Part 2) ===== */
+function checkAllLogic(){
+  const gradeRank=document.getElementById('gradeRank').value, gradeTotal=document.getElementById('gradeTotal').value;
+  const zongceRank=document.getElementById('zongceRank').value, zongceTotal=document.getElementById('zongceTotal').value;
+  const hasZongce=document.querySelector('input[name="hasZongce"]:checked').value;
+  const gradeRatio=calcRatio(gradeRank,gradeTotal);
+  const zongceRatio=hasZongce==='是'?calcRatio(zongceRank,zongceTotal):null;
+  const alerts=[]; let needBreakthrough=false;
+
+  // Logic 1: 总人数不一致或少于10人
+  const gT=parseInt(gradeTotal), zT=parseInt(zongceTotal);
+  if(gT && gT<10) alerts.push({type:'warning',icon:'⚠',html:'<strong>成绩排名总人数少于10人。</strong>需补充提交学院盖章的《情况说明》，描述排序原则、排名基数过少原因及是否符合评审要求。'});
+  if(hasZongce==='是' && zT && zT<10) alerts.push({type:'warning',icon:'⚠',html:'<strong>综测排名总人数少于10人。</strong>需补充提交学院盖章的《情况说明》，描述排序原则、排名基数过少原因及是否符合评审要求。'});
+  if(gT && zT && hasZongce==='是' && gT!==zT) alerts.push({type:'warning',icon:'⚠',html:'<strong>成绩排名总人数与综测排名总人数不一致。</strong>同年级同专业学生总数应保持一致，需补充提交学院盖章的《情况说明》，描述不一致的具体原因。'});
+
+  // Logic 2: 比例超10%但在30%内
+  if(gradeRatio!==null && gradeRatio>10){
+    if(gradeRatio>30) alerts.push({type:'danger',icon:'✕',html:'<strong>成绩排名比例超过30%，不符合参评资格。</strong>排名超过30%的直接取消名额。'});
+    else { needBreakthrough=true; alerts.push({type:'info',icon:'ℹ',html:'<strong>成绩排名比例超过10%（但在前30%以内）。</strong>需选择"是否破格参评"，并补充提交学院出具的相关证明。'}); }
+  }
+  if(zongceRatio!==null && zongceRatio>10){
+    if(zongceRatio>30) alerts.push({type:'danger',icon:'✕',html:'<strong>综测排名比例超过30%，不符合参评资格。</strong>排名超过30%的直接取消名额。'});
+    else { needBreakthrough=true; alerts.push({type:'info',icon:'ℹ',html:'<strong>综测排名比例超过10%（但在前30%以内）。</strong>需选择"是否破格参评"，并补充提交学院出具的相关证明。'}); }
+  }
+
+  document.getElementById('p2-logicAlerts').innerHTML=alerts.map(a=>`<div class="alert alert-${a.type}"><span class="alert-icon">${a.icon}</span><span>${a.html}</span></div>`).join('');
+
+  const bt=document.getElementById('breakthroughSection');
+  if(needBreakthrough){
+    bt.innerHTML=`<div class="breakthrough-box"><h4>⚖ 破格参评</h4><div class="field full"><label class="field-label">是否破格参评 <span class="req">*</span></label><div class="radio-group"><label class="radio-item"><input type="radio" name="breakthrough" value="是"><span class="radio-dot"></span>是，申请破格参评</label><label class="radio-item"><input type="radio" name="breakthrough" value="否"><span class="radio-dot"></span>否</label></div></div><div class="alert alert-warning"><span class="alert-icon">⚠</span><span><strong>破格参评提醒：</strong>排名未进入前10%但达到前30%（含30%）的学生，须符合"其他方面表现非常突出"方可参评。需补充提交学院出具的相关证明材料（含获奖证书复印件等），经学校审核盖章确认。</span></div></div>`;
+    document.querySelectorAll('input[name="breakthrough"]').forEach(r=>r.addEventListener('change',updateAutoRemarks));
+  } else bt.innerHTML='';
+
+  // 处分/不及格 alerts
+  document.getElementById('punishAlert').style.display=document.querySelector('input[name="punish"]:checked').value==='是'?'flex':'none';
+  document.getElementById('failAlert').style.display=document.querySelector('input[name="failFlag"]:checked').value==='是'?'flex':'none';
+
+  updateAutoRemarks();
+  return needBreakthrough;
+}
+
+/* ===== Toggle Functions ===== */
+function toggleZongce(){ const v=document.querySelector('input[name="hasZongce"]:checked').value; document.getElementById('zongceBlock').style.display=v==='是'?'block':'none'; if(v==='否'){ document.getElementById('zongceRank').value=''; document.getElementById('zongceTotal').value=''; document.getElementById('zongceRatioDisplay').style.display='none'; } checkAllLogic(); }
+
+function toggleFirstScholar(){ const v=document.querySelector('input[name="firstScholar"]:checked').value; document.getElementById('firstScholarBox').style.display=v==='是'?'block':'none'; document.getElementById('firstScholarAlert').style.display=v==='否'?'flex':'none'; }
+
+document.querySelectorAll('input[name="comprehensiveHonor"]').forEach(r=>r.addEventListener('change',()=>{ document.getElementById('honorAlert').style.display=document.querySelector('input[name="comprehensiveHonor"]:checked').value==='否'?'flex':'none'; }));
+document.querySelectorAll('input[name="punish"]').forEach(r=>r.addEventListener('change',checkAllLogic));
+document.querySelectorAll('input[name="failFlag"]').forEach(r=>r.addEventListener('change',checkAllLogic));
+
+/* ===== Awards (Part 3) ===== */
+function toggleAwards(){ const v=document.querySelector('input[name="hasAwards"]:checked').value; document.getElementById('awardsBox').style.display=v==='有'?'block':'none'; document.getElementById('noAwardsAlert').style.display=v==='无'?'flex':'none'; if(v==='有'&&awardRows.length===0) addAwardRow(); }
+function addAwardRow(){ if(awardRows.length>=4){ showToast('最多填写四项获奖', 'warning'); return; } awardRows.push({}); renderAwards(); }
+function removeAwardRow(idx){ awardRows.splice(idx,1); if(awardRows.length===0) awardRows.push({}); renderAwards(); }
+function renderAwards(){
+  const body=document.getElementById('awardsBody');
+  body.innerHTML=awardRows.map((r,i)=>`<tr><td class="row-num">${i+1}</td><td><input class="aw-input aw-date" placeholder="如：2025年9月"></td><td><input class="aw-input aw-name" placeholder="奖项名称严格按证书填写"></td><td><input class="aw-input aw-unit" placeholder="按证书下标落款单位填写"></td><td style="text-align:center"><button class="file-remove" onclick="removeAwardRow(${i})" style="width:24px;height:24px;font-size:14px">×</button></td></tr>`).join('');
+  document.getElementById('awardCount').textContent=`已填写 ${awardRows.length} / 4 项`;
+  document.getElementById('addAwardBtn').disabled=awardRows.length>=4;
+}
+
+/* ===== Research Items (Part 4) ===== */
+function toggleResearch(){ const v=document.querySelector('input[name="hasResearch"]:checked').value; document.getElementById('researchBox').style.display=v==='有'?'block':'none'; if(v==='有'&&researchItems.length===0) addResearchItem(); }
+
+function addResearchItem(){
+  researchItems.push({id:Date.now(),type:'论文'});
+  renderResearchItems();
+}
+function removeResearchItem(id){ researchItems=researchItems.filter(r=>r.id!==id); renderResearchItems(); }
+function changeResearchType(id,type){ const item=researchItems.find(r=>r.id===id); if(item){ item.type=type; renderResearchItems(); } }
+
+function renderResearchItems(){
+  const list=document.getElementById('researchList');
+  list.innerHTML=researchItems.map(item=>{
+    let fields='';
+    if(item.type==='论文'){
+      fields=`<div class="form-grid">
+        <div class="field"><label class="field-label">录用时间 <span class="req">*</span></label><input class="input" placeholder="如：2025年3月"></div>
+        <div class="field"><label class="field-label">期刊名称 <span class="req">*</span></label><input class="input" placeholder="只要期刊名，不要论文名"></div>
+        <div class="field full">
+          <label class="field-label">作者排名（物理排序） <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="author_${item.id}" value="学生本人一作"><span class="radio-dot"></span>学生本人一作</label>
+            <label class="radio-item"><input type="radio" name="author_${item.id}" value="导师一作，学生二作"><span class="radio-dot"></span>导师一作，学生二作</label>
+            <label class="radio-item"><input type="radio" name="author_${item.id}" value="其他" onchange="toggleOther(this,'author_other_${item.id}')"><span class="radio-dot"></span>其他</label>
+          </div>
+          <input class="input" id="author_other_${item.id}" placeholder="请补充说明作者排名情况" style="display:none;margin-top:8px">
+        </div>
+        <div class="field full">
+          <label class="field-label">期刊类别 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="journal_${item.id}" value="顶级期刊"><span class="radio-dot"></span>顶级期刊</label>
+            <label class="radio-item"><input type="radio" name="journal_${item.id}" value="卓越期刊"><span class="radio-dot"></span>卓越期刊</label>
+            <label class="radio-item"><input type="radio" name="journal_${item.id}" value="一类核心期刊"><span class="radio-dot"></span>一类核心期刊</label>
+            <label class="radio-item"><input type="radio" name="journal_${item.id}" value="核心期刊"><span class="radio-dot"></span>核心期刊</label>
+            <label class="radio-item"><input type="radio" name="journal_${item.id}" value="其他" onchange="toggleOther(this,'journal_other_${item.id}')"><span class="radio-dot"></span>其他</label>
+          </div>
+          <input class="input" id="journal_other_${item.id}" placeholder="请补充说明期刊类别" style="display:none;margin-top:8px">
+        </div>
+        <div class="field full">
+          <label class="field-label">收录数据库 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="db_${item.id}" value="SCI"><span class="radio-dot"></span>SCI</label>
+            <label class="radio-item"><input type="radio" name="db_${item.id}" value="SCIE"><span class="radio-dot"></span>SCIE</label>
+            <label class="radio-item"><input type="radio" name="db_${item.id}" value="SSCI"><span class="radio-dot"></span>SSCI</label>
+            <label class="radio-item"><input type="radio" name="db_${item.id}" value="EI"><span class="radio-dot"></span>EI</label>
+            <label class="radio-item"><input type="radio" name="db_${item.id}" value="CPCI-S"><span class="radio-dot"></span>CPCI-S</label>
+            <label class="radio-item"><input type="radio" name="db_${item.id}" value="CSSCI"><span class="radio-dot"></span>CSSCI</label>
+            <label class="radio-item"><input type="radio" name="db_${item.id}" value="CSCD"><span class="radio-dot"></span>CSCD</label>
+            <label class="radio-item"><input type="radio" name="db_${item.id}" value="北大核心"><span class="radio-dot"></span>北大核心</label>
+            <label class="radio-item"><input type="radio" name="db_${item.id}" value="其他" onchange="toggleOther(this,'db_other_${item.id}')"><span class="radio-dot"></span>其他</label>
+          </div>
+          <input class="input" id="db_other_${item.id}" placeholder="请补充说明收录数据库" style="display:none;margin-top:8px">
+        </div>
+        <div class="field"><label class="field-label">IF <span class="hint">选填</span></label><input class="input" type="number" step="0.01" placeholder="如：3.45"></div>
+      </div>`;
+    } else if(item.type==='专利'){
+      fields=`<div class="form-grid">
+        <div class="field"><label class="field-label">专利名称 <span class="req">*</span></label><input class="input" placeholder="请填写专利名称"></div>
+        <div class="field"><label class="field-label">授权年份 <span class="req">*</span></label><input class="input" type="number" placeholder="如：2025"></div>
+        <div class="field"><label class="field-label">专利权人 <span class="req">*</span></label><input class="input" placeholder="如：所在高校"></div>
+        <div class="field"><label class="field-label">发明人 <span class="req">*</span></label><input class="input" placeholder="请填写发明人"></div>
+        <div class="field"><label class="field-label">排名 <span class="req">*</span></label><input class="input" type="number" min="1" placeholder="如：1"></div>
+        <div class="field"><label class="field-label">专利类型 <span class="req">*</span></label><select class="select"><option value="">请选择</option><option>国家发明专利</option><option>实用新型专利</option></select></div>
+        <div class="field full"><label class="field-label">专利号 <span class="req">*</span></label><input class="input" placeholder="请填写专利号"></div>
+      </div>`;
+    } else if(item.type==='SRTP'){
+      fields=`<div class="form-grid">
+        <div class="field full"><label class="field-label">项目名称 <span class="req">*</span></label><input class="input" placeholder="请填写SRTP项目名称"></div>
+        <div class="field full">
+          <label class="field-label">项目等级 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="srtp_lv_${item.id}" value="校级"><span class="radio-dot"></span>校级</label>
+            <label class="radio-item"><input type="radio" name="srtp_lv_${item.id}" value="国家级"><span class="radio-dot"></span>国家级</label>
+            <label class="radio-item"><input type="radio" name="srtp_lv_${item.id}" value="其他" onchange="toggleOther(this,'srtp_other_${item.id}')"><span class="radio-dot"></span>其他</label>
+          </div>
+          <input class="input" id="srtp_other_${item.id}" placeholder="请补充说明项目等级" style="display:none;margin-top:8px">
+        </div>
+        <div class="field full">
+          <label class="field-label">是否是项目负责人 <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="srtp_leader_${item.id}" value="是"><span class="radio-dot"></span>是</label>
+            <label class="radio-item"><input type="radio" name="srtp_leader_${item.id}" value="否" onchange="toggleSrtpRank(this,'srtp_rank_${item.id}')"><span class="radio-dot"></span>否</label>
+          </div>
+        </div>
+        <div class="field" id="srtp_rank_${item.id}" style="display:none"><label class="field-label">参与排名 <span class="req">*</span></label><select class="select"><option value="">请选择</option>${Array.from({length:10},(_,i)=>`<option>${i+1}</option>`).join('')}</select></div>
+      </div>`;
+    }
+    return `<div class="research-item">
+      <div class="research-item-head">
+        <span class="ri-tag">科研成果 #${researchItems.indexOf(item)+1}</span>
+        <button class="ri-remove" onclick="removeResearchItem(${item.id})">×</button>
+      </div>
+      <div class="field" style="margin-bottom:14px"><label class="field-label">成果类型 <span class="req">*</span></label>
+        <select class="select" onchange="changeResearchType(${item.id},this.value)">
+          <option value="论文" ${item.type==='论文'?'selected':''}>论文</option>
+          <option value="专利" ${item.type==='专利'?'selected':''}>专利</option>
+          <option value="本科生科研训练计划(SRTP)项目" ${item.type==='本科生科研训练计划(SRTP)项目'?'selected':''}>本科生科研训练计划(SRTP)项目</option>
+        </select>
+      </div>
+      ${fields}
+    </div>`;
+  }).join('');
+}
+
+function toggleOther(radio, inputId){ document.getElementById(inputId).style.display=radio.checked?'block':'none'; }
+function toggleSrtpRank(radio, divId){ document.getElementById(divId).style.display=radio.checked?'block':'none'; }
+
+/* ===== Practice ===== */
+function togglePractice(){ document.getElementById('practiceBox').style.display=document.querySelector('input[name="hasPractice"]:checked').value==='是'?'block':'none'; }
+document.getElementById('practiceDesc').addEventListener('input',function(){ document.getElementById('practiceCount').textContent=this.value.length+' / 30'; });
+
+/* ===== Auto Remarks ===== */
+function updateAutoRemarks(){
+  const remarks=[];
+  if(checkOverStudy()) remarks.push('超学制：该生按照入学时间和学制年限计算逾期参评，需补充提交学院盖章的《情况说明》。');
+  const gT=parseInt(document.getElementById('gradeTotal').value), zT=parseInt(document.getElementById('zongceTotal').value);
+  const hasZongce=document.querySelector('input[name="hasZongce"]:checked').value;
+  if((gT&&gT<10)||(hasZongce==='是'&&zT&&zT<10)||(gT&&zT&&hasZongce==='是'&&gT!==zT)) remarks.push('排名基数异常：总人数不一致或少于10人，需补充提交学院盖章的《情况说明》。');
+  const gr=calcRatio(document.getElementById('gradeRank').value,document.getElementById('gradeTotal').value);
+  const zr=hasZongce==='是'?calcRatio(document.getElementById('zongceRank').value,document.getElementById('zongceTotal').value):null;
+  let needBt=false;
+  if((gr&&gr>10&&gr<=30)||(zr&&zr>10&&zr<=30)) needBt=true;
+  const btChecked=document.querySelector('input[name="breakthrough"]:checked');
+  if(needBt&&btChecked&&btChecked.value==='是') remarks.push('需破格：排名比例超过10%但在前30%以内，已申请破格参评，需补充提交学院出具的相关证明材料。');
+
+  const list=document.getElementById('autoRemarksList');
+  if(remarks.length===0){ list.innerHTML='<li class="remarks-auto-empty">暂无自动备注</li>'; }
+  else { list.innerHTML=remarks.map(r=>`<li><span>▸</span><span>${r}</span></li>`).join(''); }
+}
+
+/* ===== Event Listeners ===== */
+document.getElementById('f-enroll').addEventListener('input',()=>{ checkOverStudy(); updateAutoRemarks(); });
+document.getElementById('f-xuezhi').addEventListener('change',()=>{ checkOverStudy(); updateAutoRemarks(); });
+document.getElementById('gradeRank').addEventListener('input',updateGradeRatio);
+document.getElementById('gradeTotal').addEventListener('input',updateGradeRatio);
+document.getElementById('zongceRank').addEventListener('input',updateZongceRatio);
+document.getElementById('zongceTotal').addEventListener('input',updateZongceRatio);
+
+/* ===== Application Reason (Part 5) ===== */
+function generateReason(){
+  const name=document.getElementById('f-name').value||'本人';
+  const college=document.getElementById('f-college').value||'××学院';
+  const major=document.getElementById('f-major').value||'××专业';
+  const gradeRank=document.getElementById('gradeRank').value;
+  const gradeTotal=document.getElementById('gradeTotal').value;
+  const zongceRank=document.getElementById('zongceRank').value;
+  const zongceTotal=document.getElementById('zongceTotal').value;
+  const volunteerHours=document.getElementById('volunteerHours').value;
+  const hasZongce=document.querySelector('input[name="hasZongce"]:checked')?document.querySelector('input[name="hasZongce"]:checked').value:'否';
+
+  let parts=[];
+  parts.push(`我是${college}${major}专业的${name}，政治立场坚定，思想积极进步，在校期间严格遵守校纪校规，品行端正。`);
+  if(gradeRank&&gradeTotal){
+    const ratio=(parseFloat(gradeRank)/parseFloat(gradeTotal)*100).toFixed(1);
+    let s=`参评学年中学习刻苦，成绩排名第${gradeRank}/${gradeTotal}名（前${ratio}%）`;
+    if(hasZongce==='是'&&zongceRank&&zongceTotal) s+=`，综合测评排名第${zongceRank}/${zongceTotal}名`;
+    s+='，必修课全部及格，无不及格科目。';
+    parts.push(s);
+  }
+  const firstScholar=document.querySelector('input[name="firstScholar"]:checked');
+  if(firstScholar&&firstScholar.value==='是'){
+    const sname=document.getElementById('firstScholarName')?document.getElementById('firstScholarName').value:'';
+    parts.push(sname?`获得${sname}，`:'获得一等奖学金，');
+  }
+  const comprehensiveHonor=document.querySelector('input[name="comprehensiveHonor"]:checked');
+  if(comprehensiveHonor&&comprehensiveHonor.value==='是') parts.push('并获得校级及以上综合类荣誉，');
+  const aw=document.querySelector('input[name="hasAwards"]:checked');
+  if(aw&&aw.value==='有'&&awardRows.length>0){
+    const names=document.querySelectorAll('#awardsBody .aw-name');
+    const awardNames=[];
+    names.forEach(n=>{ if(n.value) awardNames.push(n.value); });
+    if(awardNames.length>0) parts.push(`在学科竞赛方面，获得${awardNames.join('、')}等奖项。`);
+  }
+  const hasResearch=document.querySelector('input[name="hasResearch"]:checked');
+  if(hasResearch&&hasResearch.value==='有'&&researchItems.length>0) parts.push('积极参与科研活动，取得一定科研成果。');
+  if(volunteerHours) parts.push(`热心公益，志愿汇时长达${volunteerHours}小时。`);
+  const hasPractice=document.querySelector('input[name="hasPractice"]:checked');
+  if(hasPractice&&hasPractice.value==='是') parts.push('积极投身社会实践活动。');
+  parts.push('综上所述，本人符合国家奖学金参评条件，特申请国家奖学金，今后将继续努力学习、全面发展，以实际行动回报学校和社会的培养。');
+
+  const cleaned=parts.join('').replace(/，+/g,'，').replace(/。+/g,'。').replace(/，。/g,'。');
+  document.getElementById('reasonText').value=cleaned.substring(0,500);
+  updateReasonCount();
+  updateProgress();
+  showToast('申请理由草稿已生成，请检查并完善','success');
+}
+function copyReason(){
+  const text=document.getElementById('reasonText').value;
+  if(!text.trim()){ showToast('申请理由为空，无法复制','warning'); return; }
+  navigator.clipboard.writeText(text).then(()=>showToast('申请理由已复制到剪贴板','success')).catch(()=>showToast('复制失败，请手动选择文本复制','danger'));
+}
+function updateReasonCount(){
+  const ta=document.getElementById('reasonText');
+  const count=document.getElementById('reasonCount');
+  const len=ta.value.length;
+  count.textContent=len+' / 500';
+  count.classList.toggle('over',len>=500);
+}
+document.getElementById('reasonText').addEventListener('input',updateReasonCount);
+
+/* ===== File Upload ===== */
+const uploadZone=document.getElementById('uploadZone');
+uploadZone.addEventListener('dragover',e=>{e.preventDefault();uploadZone.classList.add('dragover');});
+uploadZone.addEventListener('dragleave',()=>uploadZone.classList.remove('dragover'));
+uploadZone.addEventListener('drop',e=>{e.preventDefault();uploadZone.classList.remove('dragover');handleFiles(e.dataTransfer.files);});
+
+function handleFiles(files){
+  Array.from(files).forEach(file=>{
+    if(file.size>20*1024*1024){ showToast('文件 "'+file.name+'" 超过20MB限制','danger'); return; }
+    const validTypes=['application/pdf','image/jpeg','image/png','image/jpg'];
+    if(!validTypes.includes(file.type)){ showToast('文件 "'+file.name+'" 格式不支持','danger'); return; }
+    uploadedFiles.push(file); renderFileItem(file);
+  });
+  updateProgress();
+}
+function renderFileItem(file){
+  const item=document.createElement('div'); item.className='file-item';
+  const ext=file.name.split('.').pop().toUpperCase();
+  const sizeStr=file.size<1024*1024?(file.size/1024).toFixed(1)+' KB':(file.size/(1024*1024)).toFixed(2)+' MB';
+  item.innerHTML=`<div class="file-icon">${ext==='PDF'?'📄':'🖼'}</div><div class="file-info"><div class="file-name">${file.name}</div><div class="file-size">${ext} · ${sizeStr}</div></div><button class="file-remove" onclick="removeFile(this,'${file.name}',${file.size},${file.lastModified})">×</button>`;
+  document.getElementById('fileList').appendChild(item);
+}
+function removeFile(btn,name,size,lastMod){ uploadedFiles=uploadedFiles.filter(f=>!(f.name===name&&f.size===size&&f.lastModified===lastMod)); btn.closest('.file-item').remove(); updateProgress(); }
+
+/* ===== Progress ===== */
+function updateProgress(){
+  let completed=0; const total=6;
+  // P1
+  if(document.getElementById('f-name').value&&document.getElementById('f-idcard').value&&document.getElementById('f-college').value&&document.getElementById('f-major').value&&document.getElementById('f-studentid').value&&document.querySelector('input[name="gender"]:checked')&&document.getElementById('f-nation').value&&document.getElementById('f-xuezhi').value&&document.getElementById('f-enroll').value) completed++;
+  // P2
+  if(document.getElementById('gradeRank').value&&document.getElementById('gradeTotal').value&&document.querySelector('input[name="firstScholar"]:checked')&&document.querySelector('input[name="comprehensiveHonor"]:checked')) completed++;
+  // P3
+  const aw=document.querySelector('input[name="hasAwards"]:checked');
+  if(aw&&aw.value==='无') completed++;
+  else if(aw&&aw.value==='有'&&awardRows.length>=3) completed++;
+  // P4
+  if(document.getElementById('volunteerHours').value&&document.querySelector('input[name="hasPractice"]:checked')) completed++;
+  // P5
+  if(document.getElementById('reasonText').value.trim().length>0) completed++;
+  // P6
+  if(uploadedFiles.length>0) completed++;
+  const pct=Math.round((completed/total)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressText').textContent=pct+'%';
+}
+document.querySelectorAll('input,select,textarea').forEach(el=>{ el.addEventListener('input',updateProgress); el.addEventListener('change',updateProgress); });
+
+/* ===== Toast ===== */
+function showToast(msg,type='info'){ const t=document.createElement('div'); t.className='toast '+type; const icons={success:'✓',warning:'⚠',danger:'✕',info:'ℹ'}; t.innerHTML=`<span>${icons[type]||'ℹ'}</span><span>${msg}</span>`; document.getElementById('toastContainer').appendChild(t); setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(40px)';t.style.transition='all .3s';setTimeout(()=>t.remove(),300);},3500); }
+
+/* ===== Submit ===== */
+function submitForm(){
+  const reqIds=['f-name','f-idcard','f-college','f-major','f-studentid','f-nation','f-xuezhi','f-enroll'];
+  for(const id of reqIds){ if(!document.getElementById(id).value){ showToast('请完善个人信息','warning'); document.getElementById('sec-p1').scrollIntoView({behavior:'smooth'}); return; } }
+  if(!document.querySelector('input[name="gender"]:checked')){ showToast('请选择性别','warning'); return; }
+  if(!document.getElementById('gradeRank').value||!document.getElementById('gradeTotal').value){ showToast('请填写成绩排名信息','warning'); document.getElementById('sec-p2').scrollIntoView({behavior:'smooth'}); return; }
+  const gr=calcRatio(document.getElementById('gradeRank').value,document.getElementById('gradeTotal').value);
+  const zr=document.querySelector('input[name="hasZongce"]:checked').value==='是'?calcRatio(document.getElementById('zongceRank').value,document.getElementById('zongceTotal').value):null;
+  if((gr&&gr>30)||(zr&&zr>30)){ showToast('排名比例超过30%，不符合参评资格，无法提交','danger'); return; }
+  const bt=document.getElementById('breakthroughSection');
+  if(bt.innerHTML.trim()!==''){ const bts=document.querySelector('input[name="breakthrough"]:checked'); if(!bts){ showToast('请选择"是否破格参评"','warning'); return; } if(bts.value==='否'){ showToast('排名超过10%且未选择破格参评，不符合参评条件','danger'); return; } }
+  if(!document.querySelector('input[name="firstScholar"]:checked')){ showToast('请选择是否获得一等奖学金','warning'); return; }
+  if(document.querySelector('input[name="firstScholar"]:checked').value==='否'){ showToast('未获得一等奖学金，不符合申请标准','danger'); return; }
+  if(!document.querySelector('input[name="comprehensiveHonor"]:checked')){ showToast('请选择是否获得校级及以上综合类荣誉','warning'); return; }
+  if(document.querySelector('input[name="comprehensiveHonor"]:checked').value==='否'){ showToast('未获得校级及以上综合类荣誉，不符合申请标准','danger'); return; }
+  if(!document.getElementById('volunteerHours').value){ showToast('请填写志愿汇时长','warning'); document.getElementById('sec-p4').scrollIntoView({behavior:'smooth'}); return; }
+  if(!document.getElementById('reasonText').value.trim()){ showToast('请填写申请理由','warning'); document.getElementById('sec-reason').scrollIntoView({behavior:'smooth'}); return; }
+  if(uploadedFiles.length===0){ showToast('请上传至少一个证明材料文件','warning'); document.getElementById('sec-p5').scrollIntoView({behavior:'smooth'}); return; }
+  showToast('申请提交成功！请等待学院审核','success');
+}
+
+/* ===== Init ===== */
+updateProgress();
+checkAllLogic();
+checkOverStudy();
+</script>
+
+</body>
+</html>
